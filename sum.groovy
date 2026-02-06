@@ -34,33 +34,8 @@ class SumAndSubstractionWithFloats extends Specification {
 
 class Operations {
 
-float Div (float a=0.0, float b=0.0) {
-float res=a/b
-return res
-}
-
 float Sum (float a=0.0, float b=0.0) {
 float res=a+b
-return res
-}
-
-float Sub (float a=0.0, float b=0.0){
-float res=a-b
-return res
-}
-
-float Mult (float a=0.0, float b=0.0) {
-float res=a*b
-return res
-}
-
-float Exp (float a=0.0, float b=0.0) {
-float res=a**b
-return res
-}
-
-float SR (float a=0.0) {
-float res=Math.sqrt(a)
 return res
 }
 
