@@ -1,60 +1,35 @@
 import spock.lang.Specification
+import spock.lang.Unroll
+import spock.lang.Shared
 
-/**
- * Test Procedure: Formal Verification of the Exponential Function (e^x)
- * Target: IEEE-754 Single Precision (32-bit float)
- */
-class ExponentialSpecification extends Specification {
+class ExponentWithFloats extends Specification {
     def o = new Operations()
-    def neg_inf = Float.NEGATIVE_INFINITY
-    def pos_inf = Float.POSITIVE_INFINITY
-    def M = Float.MAX_VALUE
     
-    // Test Case: Exponential of Positive Infinity
-    def "Test: exp(+INF) =? +INF"() {
-        expect:
-            pos_inf == o.Exp(pos_inf)
-    }
+    // Las variables usadas en 'where' deben ser @Shared
+    @Shared float pos_inf = Float.POSITIVE_INFINITY
+    @Shared float neg_inf = Float.NEGATIVE_INFINITY
+    @Shared float M = Float.MAX_VALUE
 
-    // Test Case: Exponential of Negative Infinity (Limit at Zero)
-    def "Test: exp(-INF) =? 0.0"() {
+    @Unroll
+    def "Test Exponent: exp(#input) =? #expected"() {
         expect:
-            0.0f == o.Exp(neg_inf)
-    }
+            if (Float.isNaN(expected)) {
+                assert Float.isNaN(o.Exp(input))
+            } else {
+                assert expected == o.Exp(input)
+            }
 
-    // Test Case: Exponential of Zero (Identity)
-    def "Test: exp(0.0) =? 1.0"() {
-        expect:
-            1.0f == o.Exp(0.0f)
-    }
-
-    // Test Case: Exponential of Negative Zero (Sign preservation of result)
-    def "Test: exp(-0.0) =? 1.0"() {
-        expect:
-            1.0f == o.Exp(-0.0f)
-    }
-
-    // Test Case: Natural Overflow for 32-bit Float
-    // e^89 approx 4.4E38, which exceeds Float.MAX_VALUE (~3.4E38)
-    def "Test: exp(89.0) =? +INF"() {
-        expect:
-            pos_inf == o.Exp(89.0f)
-    }
-
-    // Test Case: NaN Propagation
-    def "Test: exp(NaN) =? NaN"() {
-        expect:
-            Float.isNaN(o.Exp(Float.NaN))
+        where:
+        input     || expected
+        pos_inf   || pos_inf
+        neg_inf   || 0.0f
+        0.0f      || 1.0f
+        -0.0f     || 1.0f
+        M         || pos_inf
+        Float.NaN || Float.NaN
     }
 }
 
 class Operations {
-    /**
-     * Calculates the exponential of a float value.
-     * Uses Math.exp but ensures float-specific precision and return types.
-     */
-    float Exp(float a) {
-        float res = (float) Math.exp((double) a)
-        return res
-    }
+    float Exp(float a) { return (float) Math.exp((double) a) }
 }
